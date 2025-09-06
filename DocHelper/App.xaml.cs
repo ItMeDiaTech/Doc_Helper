@@ -23,6 +23,12 @@ public partial class App : PrismApplication
     {
         base.OnStartup(e);
         
+        // Ensure proper installation in %AppData%
+        await InstallationService.EnsureInstallationAsync();
+        
+        // Try to pin to taskbar (first run or if not already pinned)
+        _ = Task.Run(async () => await InstallationService.TryPinToTaskbarAsync());
+        
         var updateService = Container.Resolve<UpdateService>();
         var settingsViewModel = new SettingsViewModel();
         

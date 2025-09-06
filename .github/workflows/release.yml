@@ -28,15 +28,21 @@ jobs:
       - name: Publish
         run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
 
-      - name: Create Release Archive
+      - name: Create Release Files
         run: |
+          # Create ZIP archive
           Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Release.zip
+          
+          # Copy standalone exe for direct download
+          Copy-Item ./publish/DocHelper.exe DocHelper.exe
         shell: powershell
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: DocHelper-Release.zip
+          files: |
+            DocHelper-Release.zip
+            DocHelper.exe
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
 

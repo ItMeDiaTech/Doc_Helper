@@ -25,6 +25,7 @@ public class MainWindowViewModel : BindableBase
         SelectFilesCommand = new DelegateCommand(ExecuteSelectFiles);
         OpenFileCommand = new DelegateCommand<FileItem>(ExecuteOpenFile);
         SettingsCommand = new DelegateCommand(ExecuteSettings);
+        LogsFolderCommand = new DelegateCommand(ExecuteLogsFolder);
     }
 
     public ObservableCollection<FileItem> SelectedFiles
@@ -48,6 +49,7 @@ public class MainWindowViewModel : BindableBase
     public DelegateCommand SelectFilesCommand { get; }
     public DelegateCommand<FileItem> OpenFileCommand { get; }
     public DelegateCommand SettingsCommand { get; }
+    public DelegateCommand LogsFolderCommand { get; }
 
     private void ExecuteSelectFiles()
     {
@@ -98,6 +100,11 @@ public class MainWindowViewModel : BindableBase
     {
         var settingsWindow = new SettingsWindow();
         settingsWindow.ShowDialog();
+    }
+
+    private void ExecuteLogsFolder()
+    {
+        InstallationService.OpenLogsFolder();
     }
 
     private void ExtractHyperlinks(string filePath)
