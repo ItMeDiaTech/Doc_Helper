@@ -16,7 +16,18 @@ public partial class App : PrismApplication
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.RegisterSingleton<UpdateService>();
+    }
+
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
         
+        var updateService = Container.Resolve<UpdateService>();
+        var settingsViewModel = new SettingsViewModel();
+        
+        // Check for updates on startup if auto-check is enabled
+        await updateService.CheckForUpdatesOnStartupAsync(settingsViewModel.AutoCheckForUpdates);
     }
 }
 
