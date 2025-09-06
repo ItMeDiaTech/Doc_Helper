@@ -56,7 +56,7 @@ jobs:
       - name: Link MSI with Light
         run: |
           cd installer
-          light.exe -out DocHelper-Setup.msi DocHelper-Simple.wixobj HarvestedFiles.wixobj -ext WixUIExtension
+          light.exe -out DocHelper-Setup.msi DocHelper-Simple.wixobj HarvestedFiles.wixobj -ext WixUIExtension -sice:ICE38 -sice:ICE64 -sice:ICE91 -sice:ICE57
         shell: cmd
 
       - name: Create Release Archive
