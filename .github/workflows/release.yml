@@ -25,11 +25,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Doc_Helper.sln
 
-      - name: Build
-        run: dotnet build Doc_Helper.sln --configuration Release --no-restore
-
       - name: Publish
-        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --no-build --self-contained true --runtime win-x64
+        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
 
       - name: Create Release Archive
         run: |
