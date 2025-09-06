@@ -17,7 +17,8 @@
       "Bash(gh workflow:*)",
       "Bash(gh run list:*)",
       "Bash(gh run view:*)",
-      "Bash(dotnet publish:*)"
+      "Bash(dotnet publish:*)",
+      "Bash(./DocHelper.exe)"
     ],
     "deny": [],
     "ask": []
