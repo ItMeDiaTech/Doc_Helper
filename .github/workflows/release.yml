@@ -36,13 +36,8 @@ jobs:
           # Single file executable (standalone)
           Copy-Item ./publish-single/DocHelper.exe DocHelper-Standalone.exe
           
-          # Multi-file version (portable folder)
-          New-Item -ItemType Directory -Path "./portable" -Force
-          Copy-Item -Path "./publish-multi/*" -Destination "./portable/" -Recurse -Force
-          Compress-Archive -Path ./portable/* -DestinationPath DocHelper-Portable.zip
-          
-          # Complete release package
-          Compress-Archive -Path ./publish-multi/* -DestinationPath DocHelper-Release.zip
+          # Multi-file version (portable folder with all dependencies)
+          Compress-Archive -Path ./publish-multi/* -DestinationPath DocHelper-Portable.zip
         shell: powershell
 
       - name: Create Release
@@ -51,7 +46,6 @@ jobs:
           files: |
             DocHelper-Standalone.exe
             DocHelper-Portable.zip
-            DocHelper-Release.zip
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
 
@@ -68,13 +62,12 @@ jobs:
             - Added local NuGet.config for reliable package restoration
 
             ### Download Options
-            - **DocHelper-Standalone.exe**: Single executable file - download and run immediately! 
-            - **DocHelper-Portable.zip**: Portable folder version - extract and run anywhere
-            - **DocHelper-Release.zip**: Complete installation package with all files
+            - **DocHelper-Standalone.exe**: Single executable file (~61MB) - download and run immediately! 
+            - **DocHelper-Portable.zip**: Traditional folder version with all files - extract and run anywhere
             
             ### Quick Start
-            - **Easiest**: Download `DocHelper-Standalone.exe` and double-click to run
-            - **Portable**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
+            - **Recommended**: Download `DocHelper-Standalone.exe` and double-click to run
+            - **Alternative**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
             
             ### Features
             - Automatic installation to %AppData% folder
