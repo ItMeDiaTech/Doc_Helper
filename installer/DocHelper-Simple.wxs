@@ -33,28 +33,27 @@
       <Directory Id="DesktopFolder" Name="Desktop"/>
     </Directory>
 
-    <!-- Application files harvested by heat.exe -->
-    <ComponentGroup Id="ApplicationFiles" />
-
-    <!-- Shortcuts and registry -->
+    <!-- Shortcuts and registry - heat.exe will handle the actual files -->
     <DirectoryRef Id="APPLICATIONFOLDER">
-      <Component Id="MainExecutable" Guid="87654321-4321-4321-4321-210987654321">
-        <File Id="DocHelperExe" Source="..\publish\DocHelper.exe" KeyPath="yes">
-          <Shortcut Id="ApplicationStartMenuShortcut" 
-                    Directory="ApplicationProgramsFolder" 
-                    Name="Doc Helper" 
-                    Description="Doc Helper - Document Processing Application"
-                    WorkingDirectory="APPLICATIONFOLDER" 
-                    Icon="DocHelper.exe" 
-                    IconIndex="0" />
-          <Shortcut Id="ApplicationDesktopShortcut" 
-                    Directory="DesktopFolder" 
-                    Name="Doc Helper" 
-                    Description="Doc Helper - Document Processing Application"
-                    WorkingDirectory="APPLICATIONFOLDER" 
-                    Icon="DocHelper.exe" 
-                    IconIndex="0" />
-        </File>
+      <Component Id="ApplicationShortcuts" Guid="87654321-4321-4321-4321-210987654321">
+        <CreateFolder />
+        <Shortcut Id="ApplicationStartMenuShortcut" 
+                  Directory="ApplicationProgramsFolder" 
+                  Name="Doc Helper" 
+                  Description="Doc Helper - Document Processing Application"
+                  Target="[APPLICATIONFOLDER]DocHelper.exe"
+                  WorkingDirectory="APPLICATIONFOLDER" 
+                  Icon="DocHelper.exe" 
+                  IconIndex="0" />
+        <Shortcut Id="ApplicationDesktopShortcut" 
+                  Directory="DesktopFolder" 
+                  Name="Doc Helper" 
+                  Description="Doc Helper - Document Processing Application"
+                  Target="[APPLICATIONFOLDER]DocHelper.exe"
+                  WorkingDirectory="APPLICATIONFOLDER" 
+                  Icon="DocHelper.exe" 
+                  IconIndex="0" />
+        <RegistryValue Root="HKCU" Key="Software\DiaTech\DocHelper" Name="shortcuts" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
     </DirectoryRef>
 
@@ -67,7 +66,7 @@
 
     <!-- Remove shortcuts on uninstall -->
     <DirectoryRef Id="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcuts" Guid="22222222-2222-2222-2222-222222222222">
+      <Component Id="ProgramMenuCleanup" Guid="22222222-2222-2222-2222-222222222222">
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
         <RegistryValue Root="HKCU" Key="Software\DiaTech\DocHelper" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
       </Component>
@@ -75,10 +74,10 @@
 
     <!-- Features -->
     <Feature Id="ProductFeature" Title="Doc Helper" Level="1">
-      <ComponentRef Id="MainExecutable" />
       <ComponentGroupRef Id="ApplicationFiles" />
-      <ComponentRef Id="LogsDirectory" />
       <ComponentRef Id="ApplicationShortcuts" />
+      <ComponentRef Id="LogsDirectory" />
+      <ComponentRef Id="ProgramMenuCleanup" />
     </Feature>
 
     <!-- UI -->
@@ -91,7 +90,7 @@
 
     <!-- Launch after install -->
     <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Doc Helper" />
-    <Property Id="WixShellExecTarget" Value="[#DocHelperExe]" />
+    <Property Id="WixShellExecTarget" Value="[APPLICATIONFOLDER]DocHelper.exe" />
     <CustomAction Id="LaunchApplication" 
                   BinaryKey="WixCA" 
                   DllEntry="WixShellExec"
