@@ -56,11 +56,15 @@ public class InstallationService
                 Directory.CreateDirectory(LogsPath);
             }
 
-            // Get current exe path
-            var currentExePath = Assembly.GetExecutingAssembly().Location;
+            // Get current exe path (compatible with single-file apps)
+            var currentExePath = Process.GetCurrentProcess().MainModule?.FileName ?? "";
             if (string.IsNullOrEmpty(currentExePath))
             {
-                currentExePath = Process.GetCurrentProcess().MainModule?.FileName ?? "";
+                currentExePath = AppContext.BaseDirectory;
+                if (!currentExePath.EndsWith(".exe"))
+                {
+                    currentExePath = Path.Combine(currentExePath, "DocHelper.exe");
+                }
             }
 
             // If we're not running from the AppData location, copy ourselves there

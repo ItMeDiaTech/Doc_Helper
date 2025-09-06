@@ -25,26 +25,33 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Doc_Helper.sln
 
-      - name: Publish
-        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
+      - name: Publish Single File
+        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish-single --self-contained true --runtime win-x64 --verbosity normal
+
+      - name: Publish Multi-File (Portable)
+        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish-multi --self-contained true --runtime win-x64 -p:PublishSingleFile=false --verbosity normal
 
       - name: Create Release Files
         run: |
-          # Create ZIP archive with all files
-          Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Release.zip
+          # Single file executable (standalone)
+          Copy-Item ./publish-single/DocHelper.exe DocHelper-Standalone.exe
           
-          # Create a portable version - single folder with all dependencies
+          # Multi-file version (portable folder)
           New-Item -ItemType Directory -Path "./portable" -Force
-          Copy-Item -Path "./publish/*" -Destination "./portable/" -Recurse -Force
+          Copy-Item -Path "./publish-multi/*" -Destination "./portable/" -Recurse -Force
           Compress-Archive -Path ./portable/* -DestinationPath DocHelper-Portable.zip
+          
+          # Complete release package
+          Compress-Archive -Path ./publish-multi/* -DestinationPath DocHelper-Release.zip
         shell: powershell
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            DocHelper-Release.zip
+            DocHelper-Standalone.exe
             DocHelper-Portable.zip
+            DocHelper-Release.zip
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
 
@@ -61,13 +68,13 @@ jobs:
             - Added local NuGet.config for reliable package restoration
 
             ### Download Options
+            - **DocHelper-Standalone.exe**: Single executable file - download and run immediately! 
+            - **DocHelper-Portable.zip**: Portable folder version - extract and run anywhere
             - **DocHelper-Release.zip**: Complete installation package with all files
-            - **DocHelper-Portable.zip**: Portable version - extract and run anywhere
             
-            ### Installation
-            1. Download either zip file above
-            2. Extract to desired location
-            3. Run DocHelper.exe
+            ### Quick Start
+            - **Easiest**: Download `DocHelper-Standalone.exe` and double-click to run
+            - **Portable**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
             
             ### Features
             - Automatic installation to %AppData% folder
