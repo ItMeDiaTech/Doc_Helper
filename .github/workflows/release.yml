@@ -22,37 +22,47 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
+      - name: Setup WiX Toolset
+        run: |
+          # Download and install WiX Toolset 3.14
+          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314.exe" -OutFile "wix314.exe"
+          Start-Process -FilePath "wix314.exe" -ArgumentList "/S" -Wait
+          # Add WiX to PATH
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          echo "C:\Program Files (x86)\WiX Toolset v3.14\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        shell: powershell
+
       - name: Restore dependencies
         run: dotnet restore Doc_Helper.sln
 
-      - name: Install WiX Toolset
-        run: |
-          # Install WiX Toolset v3 (compatible with most environments)
-          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311.exe" -OutFile "wix311.exe"
-          Start-Process -FilePath "wix311.exe" -ArgumentList "/quiet" -Wait
-        shell: powershell
+      - name: Build
+        run: dotnet build Doc_Helper.sln --configuration Release --no-restore
 
-      - name: Publish Application
-        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
+      - name: Publish
+        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --no-build --self-contained true --runtime win-x64
 
-      - name: Build MSI Installer
+      - name: Harvest files with Heat
         run: |
-          # Add WiX to PATH
-          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
-          
-          # Harvest application files
-          heat.exe dir "publish" -cg ApplicationFiles -gg -scom -sreg -sfrag -srd -dr APPLICATIONFOLDER -out "installer\HarvestedFiles.wxs"
-          
-          # Compile WiX source files
-          candle.exe "installer\DocHelper-Simple.wxs" "installer\HarvestedFiles.wxs" -out "installer\"
-          
-          # Link to create MSI
-          light.exe "installer\DocHelper-Simple.wixobj" "installer\HarvestedFiles.wixobj" -ext WixUIExtension -out "DocHelper-Setup.msi"
-        shell: powershell
+          cd installer
+          heat.exe dir ..\publish -gg -g1 -dr APPLICATIONFOLDER -cg ApplicationFiles -out HarvestedFiles.wxs -var var.PublishDir -srd
+        shell: cmd
 
-      - name: Create Portable Version
+      - name: Build MSI with Candle
         run: |
-          # Create portable zip version
+          cd installer
+          candle.exe -dPublishDir=..\publish DocHelper-Simple.wxs HarvestedFiles.wxs
+        shell: cmd
+
+      - name: Link MSI with Light
+        run: |
+          cd installer
+          light.exe -out DocHelper-Setup.msi DocHelper-Simple.wixobj HarvestedFiles.wixobj -ext WixUIExtension
+        shell: cmd
+
+      - name: Create Release Archive
+        run: |
+          # Create both MSI and ZIP packages
+          Copy-Item "installer\DocHelper-Setup.msi" "DocHelper-Setup.msi"
           Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Portable.zip
         shell: powershell
 
@@ -65,34 +75,45 @@ jobs:
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
 
+            ### Download Options
+            - **DocHelper-Setup.msi**: Windows Installer package (recommended)
+              - Installs to `%AppData%\DiaTech\DocHelper` (no admin rights required)
+              - Creates desktop and start menu shortcuts
+              - Automatic launch after installation
+              - Supports auto-updates via built-in update checker
+            - **DocHelper-Portable.zip**: Portable version (extract and run)
+
             ### Features
             - Document processing with hyperlink extraction
             - Support for Word documents (.docx) and text files (.txt)
             - Automatic Document_ID and Content_ID parsing
             - Settings management for API configuration
             - Full MVVM architecture with Prism framework
+            - Built-in auto-update functionality with Velopack
 
             ### Changes in this release
             - Fixed NuGet restoration issues with PackageSourceMapping
             - Updated to .NET 9.0-windows for improved WPF compatibility
             - Added local NuGet.config for reliable package restoration
+            - Fixed GitHub Actions workflow with proper MSI building
 
-            ### Download Options
-            - **DocHelper-Setup.msi**: Windows MSI Installer - installs to %AppData%, handles auto-updates
-            - **DocHelper-Portable.zip**: Portable version - extract folder and run anywhere
-            
-            ### Quick Start
-            - **Recommended**: Download `DocHelper-Setup.msi` and run installer (no admin rights required)
-            - **Alternative**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
-            
-            ### Features
-            - Automatic installation to %AppData% folder
-            - Taskbar pinning on first run
-            - Logs folder creation and management
-            - Self-contained - no additional .NET runtime needed
+            ### Installation
+            **MSI Package (Recommended):**
+            1. Download DocHelper-Setup.msi
+            2. Run the installer (no admin rights required)
+            3. Follow the installation wizard
+            4. Optionally launch the application after installation
+
+            **Portable Version:**
+            1. Download DocHelper-Portable.zip
+            2. Extract to desired location
+            3. Run DocHelper.exe
+
+            ### Auto-Updates
+            The application includes built-in update checking that will automatically notify you of new versions and help you update seamlessly.
 
             ### Requirements
-            - Windows 10/11 x64
-            - No additional software required
+            - Windows 10/11
+            - .NET 9 Runtime (included in packages)
           draft: false
           prerelease: false
