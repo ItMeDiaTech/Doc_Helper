@@ -1,0 +1,72 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore Doc_Helper.sln
+      
+    - name: Build
+      run: dotnet build Doc_Helper.sln --configuration Release --no-restore
+      
+    - name: Publish
+      run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --no-build --self-contained true --runtime win-x64
+      
+    - name: Create Release Archive
+      run: |
+        Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Release.zip
+      shell: powershell
+      
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Doc Helper ${{ github.ref }}
+        body: |
+          ## Doc Helper Release
+          
+          ### Features
+          - Document processing with hyperlink extraction
+          - Support for Word documents (.docx) and text files (.txt)
+          - Automatic Document_ID and Content_ID parsing
+          - Settings management for API configuration
+          - Full MVVM architecture with Prism framework
+          
+          ### Installation
+          1. Download DocHelper-Release.zip
+          2. Extract to desired location
+          3. Run DocHelper.exe
+          
+          ### Requirements
+          - Windows 10/11
+          - .NET 8 Runtime (included in self-contained release)
+        draft: false
+        prerelease: false
+      id: create_release
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./DocHelper-Release.zip
+        asset_name: DocHelper-Release.zip
+        asset_content_type: application/zip
