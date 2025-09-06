@@ -25,20 +25,29 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Doc_Helper.sln
 
-      - name: Install Inno Setup
+      - name: Install WiX Toolset
         run: |
-          # Download and install Inno Setup
-          Invoke-WebRequest -Uri "https://jrsoftware.org/download.php/is.exe" -OutFile "innosetup.exe"
-          Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait
+          # Install WiX Toolset v3 (compatible with most environments)
+          Invoke-WebRequest -Uri "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311.exe" -OutFile "wix311.exe"
+          Start-Process -FilePath "wix311.exe" -ArgumentList "/quiet" -Wait
         shell: powershell
 
       - name: Publish Application
         run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
 
-      - name: Build Installer
+      - name: Build MSI Installer
         run: |
-          # Build the installer using Inno Setup
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\DocHelper.iss"
+          # Add WiX to PATH
+          $env:PATH += ";C:\Program Files (x86)\WiX Toolset v3.11\bin"
+          
+          # Harvest application files
+          heat.exe dir "publish" -cg ApplicationFiles -gg -scom -sreg -sfrag -srd -dr APPLICATIONFOLDER -out "installer\HarvestedFiles.wxs"
+          
+          # Compile WiX source files
+          candle.exe "installer\DocHelper-Simple.wxs" "installer\HarvestedFiles.wxs" -out "installer\"
+          
+          # Link to create MSI
+          light.exe "installer\DocHelper-Simple.wixobj" "installer\HarvestedFiles.wixobj" -ext WixUIExtension -out "DocHelper-Setup.msi"
         shell: powershell
 
       - name: Create Portable Version
@@ -51,7 +60,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            DocHelper-Setup.exe
+            DocHelper-Setup.msi
             DocHelper-Portable.zip
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
@@ -69,11 +78,11 @@ jobs:
             - Added local NuGet.config for reliable package restoration
 
             ### Download Options
-            - **DocHelper-Setup.exe**: Windows Installer - installs to %AppData%, creates shortcuts, handles updates
+            - **DocHelper-Setup.msi**: Windows MSI Installer - installs to %AppData%, handles auto-updates
             - **DocHelper-Portable.zip**: Portable version - extract folder and run anywhere
             
             ### Quick Start
-            - **Recommended**: Download `DocHelper-Setup.exe` and run installer (no admin rights required)
+            - **Recommended**: Download `DocHelper-Setup.msi` and run installer (no admin rights required)
             - **Alternative**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
             
             ### Features
