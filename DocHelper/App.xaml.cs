@@ -19,14 +19,43 @@ public partial class App : PrismApplication
         containerRegistry.RegisterSingleton<UpdateService>();
     }
 
-    protected override void OnStartup(StartupEventArgs e)
+    protected override async void OnStartup(StartupEventArgs e)
     {
-        // Ultra-minimal startup - just start the app with no additional services
-        // This eliminates all potential failure points that could prevent the app from showing
-        base.OnStartup(e);
-        
-        // Skip all initialization services for single-file deployment
-        // The app will work in basic mode without logs, updates, etc.
+        try
+        {
+            base.OnStartup(e);
+            
+            // Create logs directory (installer-deployed apps can do this safely)
+            try
+            {
+                var logsPath = InstallationService.GetLogsPath();
+                if (!System.IO.Directory.Exists(logsPath))
+                {
+                    System.IO.Directory.CreateDirectory(logsPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Logs directory creation failed: {ex.Message}");
+            }
+            
+            // Initialize services for installer-deployed version
+            try
+            {
+                var updateService = Container.Resolve<UpdateService>();
+                var settingsViewModel = new SettingsViewModel();
+                await updateService.CheckForUpdatesOnStartupAsync(settingsViewModel.AutoCheckForUpdates);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Update check failed: {ex.Message}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Continue silently if there are any startup issues
+            System.Diagnostics.Debug.WriteLine($"Startup error: {ex.Message}");
+        }
     }
 }
 

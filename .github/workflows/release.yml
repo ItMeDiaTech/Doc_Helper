@@ -25,26 +25,33 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore Doc_Helper.sln
 
-      - name: Publish Single File
-        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish-single --self-contained true --runtime win-x64 --verbosity normal
-
-      - name: Publish Multi-File (Portable)
-        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish-multi --self-contained true --runtime win-x64 -p:PublishSingleFile=false --verbosity normal
-
-      - name: Create Release Files
+      - name: Install Inno Setup
         run: |
-          # Single file executable (standalone)
-          Copy-Item ./publish-single/DocHelper.exe DocHelper-Standalone.exe
-          
-          # Multi-file version (portable folder with all dependencies)
-          Compress-Archive -Path ./publish-multi/* -DestinationPath DocHelper-Portable.zip
+          # Download and install Inno Setup
+          Invoke-WebRequest -Uri "https://jrsoftware.org/download.php/is.exe" -OutFile "innosetup.exe"
+          Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART" -Wait
+        shell: powershell
+
+      - name: Publish Application
+        run: dotnet publish DocHelper/DocHelper.csproj --configuration Release --output ./publish --self-contained true --runtime win-x64
+
+      - name: Build Installer
+        run: |
+          # Build the installer using Inno Setup
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\DocHelper.iss"
+        shell: powershell
+
+      - name: Create Portable Version
+        run: |
+          # Create portable zip version
+          Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Portable.zip
         shell: powershell
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            DocHelper-Standalone.exe
+            DocHelper-Setup.exe
             DocHelper-Portable.zip
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
@@ -62,11 +69,11 @@ jobs:
             - Added local NuGet.config for reliable package restoration
 
             ### Download Options
-            - **DocHelper-Standalone.exe**: Single executable file (~61MB) - download and run immediately! 
-            - **DocHelper-Portable.zip**: Traditional folder version with all files - extract and run anywhere
+            - **DocHelper-Setup.exe**: Windows Installer - installs to %AppData%, creates shortcuts, handles updates
+            - **DocHelper-Portable.zip**: Portable version - extract folder and run anywhere
             
             ### Quick Start
-            - **Recommended**: Download `DocHelper-Standalone.exe` and double-click to run
+            - **Recommended**: Download `DocHelper-Setup.exe` and run installer (no admin rights required)
             - **Alternative**: Download `DocHelper-Portable.zip`, extract folder, run `DocHelper.exe`
             
             ### Features
