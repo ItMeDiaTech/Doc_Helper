@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Doc Helper"
+           Language="1033"
+           Version="2.0.0"
+           Manufacturer="DiaTech"
+           UpgradeCode="A5B6C7D8-E9F0-4123-8456-789ABCDEF012"
+           InstallerVersion="500"
+           Compressed="yes"
+           Scope="perUser">
+
+    <!-- Major Upgrade Configuration -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <!-- Media Configuration -->
+    <Media Id="1" Cabinet="DocHelper.cab" EmbedCab="yes" />
+
+    <!-- Installation Directory Structure -->
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="CompanyFolder" Name="DiaTech">
+        <Directory Id="INSTALLFOLDER" Name="DocHelper" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Main Executable Component -->
+    <Component Id="MainExecutable" Directory="INSTALLFOLDER">
+      <File Source="../publish/DocHelper.exe" KeyPath="yes" />
+    </Component>
+
+    <!-- Feature -->
+    <Feature Id="MainFeature" Title="Doc Helper Application" Level="1">
+      <ComponentRef Id="MainExecutable" />
+    </Feature>
+
+  </Package>
+</Wix>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!-- Registry Configuration -->
+    <ComponentGroup Id="RegistryComponents">
+
+      <!-- Install Path Registry -->
+      <Component Id="InstallPathRegistry" Directory="INSTALLFOLDER" Guid="E1F2A3B4-C5D6-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="InstallPath"
+                       Type="string"
+                       Value="[BinFolder]"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Version Registry -->
+      <Component Id="VersionRegistry" Directory="INSTALLFOLDER" Guid="F1A2B3C4-D5E6-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="Version"
+                       Type="string"
+                       Value="$(var.ProductVersion)"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Auto-Update Configuration -->
+      <Component Id="AutoUpdateEnabledRegistry" Directory="INSTALLFOLDER" Guid="A1B2C3D4-E5F6-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\AutoUpdate"
+                       Name="Enabled"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="AutoUpdateChannelRegistry" Directory="INSTALLFOLDER" Guid="B2C3D4E5-F6A7-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\AutoUpdate"
+                       Name="Channel"
+                       Type="string"
+                       Value="stable"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="AutoUpdateLastCheckRegistry" Directory="INSTALLFOLDER" Guid="C3D4E5F6-A7B8-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\AutoUpdate"
+                       Name="LastCheck"
+                       Type="string"
+                       Value=""
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Application Settings -->
+      <Component Id="AppSettingsRegistry" Directory="INSTALLFOLDER" Guid="D4E5F6A7-B8C9-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\Settings"
+                       Name="ConfigPath"
+                       Type="string"
+                       Value="[ConfigFolder]"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="LogPathRegistry" Directory="INSTALLFOLDER" Guid="E5F6A7B8-C9D0-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\Settings"
+                       Name="LogPath"
+                       Type="string"
+                       Value="[LogsFolder]"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- File Associations (Optional - for .docx handling) -->
+      <Component Id="FileAssociationRegistry" Directory="INSTALLFOLDER" Guid="F6A7B8C9-D0E1-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\Classes\.dochelperdoc"
+                       Value="DocHelper.Document"
+                       Type="string"
+                       KeyPath="yes" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\Classes\DocHelper.Document"
+                       Value="DocHelper Document"
+                       Type="string" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\Classes\DocHelper.Document\DefaultIcon"
+                       Value="[BinFolder]DocHelper.exe,0"
+                       Type="string" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\Classes\DocHelper.Document\shell\open\command"
+                       Value="&quot;[BinFolder]DocHelper.exe&quot; &quot;%1&quot;"
+                       Type="string" />
+      </Component>
+
+      <!-- Installation Info -->
+      <Component Id="InstallDateRegistry" Directory="INSTALLFOLDER" Guid="A7B8C9D0-E1F2-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="InstallDate"
+                       Type="string"
+                       Value="[Date]"
+                       KeyPath="yes" />
+      </Component>
+
+      <Component Id="InstallerVersionRegistry" Directory="INSTALLFOLDER" Guid="B8C9D0E1-F2A3-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="InstallerVersion"
+                       Type="string"
+                       Value="5.0.0"
+                       KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+</Wix>

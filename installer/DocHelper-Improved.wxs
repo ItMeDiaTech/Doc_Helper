@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*"
+           Name="Doc Helper"
+           Language="1033"
+           Version="2.0.0.0"
+           Manufacturer="DiaTech"
+           UpgradeCode="A5B6C7D8-E9F0-4123-8456-789ABCDEF012">
+
+    <Package InstallerVersion="200"
+             Compressed="yes"
+             InstallScope="perUser"
+             Description="Doc Helper - Professional Document Processing Application"
+             Comments="Installs to %LocalAppData% and requires no administrator privileges." />
+
+    <!-- Automatic upgrades -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Install to %LocalAppData% - better than AppData -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="ManufacturerFolder" Name="DiaTech">
+          <Directory Id="APPLICATIONFOLDER" Name="DocHelper">
+            <Directory Id="BinFolder" Name="bin" />
+            <Directory Id="LogsFolder" Name="logs" />
+            <Directory Id="ConfigFolder" Name="config" />
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Doc Helper"/>
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop"/>
+    </Directory>
+
+    <!-- Core Application Files -->
+    <DirectoryRef Id="BinFolder">
+      <Component Id="MainExecutable" Guid="B1C2D3E4-F5A6-4789-0123-456789ABCDEF">
+        <File Id="DocHelperExe" Source="..\publish\DocHelper.exe" KeyPath="yes" />
+      </Component>
+
+      <Component Id="ApplicationDll" Guid="*">
+        <File Source="..\publish\DocHelper.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="ConfigFiles" Guid="*">
+        <File Source="..\publish\appsettings.json" />
+        <File Source="..\publish\DocHelper.runtimeconfig.json" />
+        <File Source="..\publish\DocHelper.deps.json" />
+        <File Source="..\publish\http-request-schema.json" />
+        <File Source="..\publish\http-response-schema.json" />
+      </Component>
+
+      <!-- Prism Framework -->
+      <Component Id="PrismComponents" Guid="*">
+        <File Source="..\publish\Prism.dll" />
+        <File Source="..\publish\Prism.Wpf.dll" />
+        <File Source="..\publish\Prism.DryIoc.Wpf.dll" />
+        <File Source="..\publish\DryIoc.dll" />
+      </Component>
+
+      <!-- DocumentFormat.OpenXml -->
+      <Component Id="DocumentFormatComponents" Guid="*">
+        <File Source="..\publish\DocumentFormat.OpenXml.dll" />
+        <File Source="..\publish\DocumentFormat.OpenXml.Framework.dll" />
+      </Component>
+
+      <!-- Velopack for updates -->
+      <Component Id="VelopackComponent" Guid="*">
+        <File Source="..\publish\Velopack.dll" />
+      </Component>
+
+      <!-- WPF Runtime -->
+      <Component Id="WpfRuntimeComponents" Guid="*">
+        <File Source="..\publish\wpfgfx_cor3.dll" />
+        <File Source="..\publish\PresentationNative_cor3.dll" />
+        <File Source="..\publish\D3DCompiler_47_cor3.dll" />
+        <File Source="..\publish\PenImc_cor3.dll" />
+        <File Source="..\publish\vcruntime140_cor3.dll" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Registry Configuration -->
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Component Id="RegistryEntries" Guid="E1F2A3B4-C5D6-4789-0123-456789ABCDEF">
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="InstallPath"
+                       Type="string"
+                       Value="[BinFolder]"
+                       KeyPath="yes" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper"
+                       Name="Version"
+                       Type="string"
+                       Value="[ProductVersion]" />
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\AutoUpdate"
+                       Name="Enabled"
+                       Type="integer"
+                       Value="1" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Shortcuts -->
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="StartMenuShortcuts" Guid="C9D0E1F2-A3B4-4789-0123-456789ABCDEF">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Doc Helper"
+                  Description="Professional document processing tool"
+                  Target="[BinFolder]DocHelper.exe"
+                  WorkingDirectory="BinFolder" />
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\DiaTech\DocHelper" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!-- Optional Desktop Shortcut -->
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="D0E1F2A3-B4C5-4789-0123-456789ABCDEF">
+        <Shortcut Id="ApplicationDesktopShortcut"
+                  Name="Doc Helper"
+                  Description="Professional document processing tool"
+                  Target="[BinFolder]DocHelper.exe"
+                  WorkingDirectory="BinFolder" />
+        <RegistryValue Root="HKCU" Key="Software\DiaTech\DocHelper" Name="DesktopShortcut" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!-- Create Directories -->
+    <DirectoryRef Id="LogsFolder">
+      <Component Id="LogsDirectory" Guid="C1D2E3F4-A5B6-4789-0123-456789ABCDEF">
+        <CreateFolder />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="ConfigFolder">
+      <Component Id="ConfigDirectory" Guid="D1E2F3A4-B5C6-4789-0123-456789ABCDEF">
+        <CreateFolder />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="Doc Helper" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="ApplicationDll" />
+      <ComponentRef Id="ConfigFiles" />
+      <ComponentRef Id="PrismComponents" />
+      <ComponentRef Id="DocumentFormatComponents" />
+      <ComponentRef Id="VelopackComponent" />
+      <ComponentRef Id="WpfRuntimeComponents" />
+      <ComponentRef Id="RegistryEntries" />
+      <ComponentRef Id="LogsDirectory" />
+      <ComponentRef Id="ConfigDirectory" />
+      <ComponentRef Id="StartMenuShortcuts" />
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+
+    <!-- UI -->
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
+
+    <!-- Icon -->
+    <Icon Id="DocHelper.exe" SourceFile="..\publish\DocHelper.exe" />
+    <Property Id="ARPPRODUCTICON" Value="DocHelper.exe" />
+
+    <!-- Launch after install -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Doc Helper" />
+    <Property Id="WixShellExecTarget" Value="[BinFolder]DocHelper.exe" />
+    <CustomAction Id="LaunchApplication"
+                  BinaryKey="WixCA"
+                  DllEntry="WixShellExec"
+                  Impersonate="yes" />
+
+    <!-- Per-user installation settings -->
+    <Property Id="ALLUSERS" Value="2" />
+    <Property Id="MSIINSTALLPERUSER" Value="1" />
+
+  </Product>
+</Wix>

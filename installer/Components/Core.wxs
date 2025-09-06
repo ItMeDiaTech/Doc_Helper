@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!-- Core Application Components -->
+    <ComponentGroup Id="CoreComponents">
+
+      <!-- Main Executable -->
+      <Component Id="MainExecutable" Directory="BinFolder" Guid="B1C2D3E4-F5A6-4789-0123-456789ABCDEF">
+        <File Id="DocHelperExe"
+              Source="$(var.PublishDir)\DocHelper.exe"
+              KeyPath="yes" />
+      </Component>
+
+      <!-- Application DLL -->
+      <Component Id="ApplicationDll" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DocHelper.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- Configuration Files -->
+      <Component Id="AppSettingsJson" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\appsettings.json" KeyPath="yes" />
+      </Component>
+
+      <!-- Runtime Configuration -->
+      <Component Id="RuntimeConfig" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DocHelper.runtimeconfig.json" KeyPath="yes" />
+      </Component>
+
+      <Component Id="DepsJson" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DocHelper.deps.json" KeyPath="yes" />
+      </Component>
+
+      <!-- Schema Files -->
+      <Component Id="HttpRequestSchema" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\http-request-schema.json" KeyPath="yes" />
+      </Component>
+
+      <Component Id="HttpResponseSchema" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\http-response-schema.json" KeyPath="yes" />
+      </Component>
+
+      <!-- WPF Native Dependencies -->
+      <Component Id="WpfGfx" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\wpfgfx_cor3.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="PresentationNative" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\PresentationNative_cor3.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="D3DCompiler" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\D3DCompiler_47_cor3.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="PenImc" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\PenImc_cor3.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="VCRuntime" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\vcruntime140_cor3.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- Create Logs Directory -->
+      <Component Id="LogsDirectory" Directory="LogsFolder" Guid="C1D2E3F4-A5B6-4789-0123-456789ABCDEF">
+        <CreateFolder>
+          <Permission User="[LogonUser]" GenericAll="yes" />
+        </CreateFolder>
+      </Component>
+
+      <!-- Create Config Directory -->
+      <Component Id="ConfigDirectory" Directory="ConfigFolder" Guid="D1E2F3A4-B5C6-4789-0123-456789ABCDEF">
+        <CreateFolder>
+          <Permission User="[LogonUser]" GenericAll="yes" />
+        </CreateFolder>
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+</Wix>

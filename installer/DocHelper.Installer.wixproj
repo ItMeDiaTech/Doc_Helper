@@ -1,0 +1,52 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <OutputName>DocHelper-Setup</OutputName>
+    <ProductName>Doc Helper</ProductName>
+    <Manufacturer>DiaTech</Manufacturer>
+    <Version>2.0.0</Version>
+    <UpgradeCode>A5B6C7D8-E9F0-4123-8456-789ABCDEF012</UpgradeCode>
+
+    <!-- Build Configuration -->
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>PublishDir=..\publish</DefineConstants>
+    <SuppressDependenciesWhenPatchingOrUpgrading>true</SuppressDependenciesWhenPatchingOrUpgrading>
+    <ProductVersion Condition="'$(ProductVersion)' == ''">2.0.0</ProductVersion>
+
+    <!-- Signing Configuration (optional) -->
+    <!--<SignOutput>true</SignOutput>
+    <SigningCertificate>DiaTech.pfx</SigningCertificate>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Package-minimal.wxs" />
+  </ItemGroup>
+
+  <!-- Exclude all other WiX files -->
+  <ItemGroup>
+    <Compile Remove="Package.wxs" />
+    <Compile Remove="DocHelper-Simple.wxs" />
+    <Compile Remove="DocHelper.wxs" />
+    <Compile Remove="Components\**" />
+    <Compile Remove="Fragments\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\DocHelper.ico" />
+    <Content Include="Assets\Banner.bmp" />
+    <Content Include="Assets\Dialog.bmp" />
+  </ItemGroup>
+
+  <!-- Pass version from build system -->
+  <Target Name="SetVersion" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <DefineConstants>$(DefineConstants);ProductVersion=$(ProductVersion)</DefineConstants>
+    </PropertyGroup>
+  </Target>
+</Project>

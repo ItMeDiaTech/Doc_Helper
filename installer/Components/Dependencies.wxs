@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!-- Third-Party Dependencies -->
+    <ComponentGroup Id="DependencyComponents">
+
+      <!-- Prism Framework -->
+      <Component Id="PrismCore" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Prism.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="PrismWpf" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Prism.Wpf.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="PrismDryIoc" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Prism.DryIoc.Wpf.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- DryIoc Container -->
+      <Component Id="DryIoc" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DryIoc.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- DocumentFormat.OpenXml -->
+      <Component Id="DocumentFormatOpenXml" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DocumentFormat.OpenXml.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="DocumentFormatOpenXmlFramework" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\DocumentFormat.OpenXml.Framework.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- Velopack Auto-Update -->
+      <Component Id="Velopack" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Velopack.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- System.IO.Packaging -->
+      <Component Id="SystemIOPackaging" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.IO.Packaging.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- Microsoft.Extensions -->
+      <Component Id="MicrosoftExtensionsConfiguration" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Extensions.Configuration.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="MicrosoftExtensionsConfigurationAbstractions" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Extensions.Configuration.Abstractions.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="MicrosoftExtensionsDependencyInjection" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Extensions.DependencyInjection.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="MicrosoftExtensionsDependencyInjectionAbstractions" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Extensions.DependencyInjection.Abstractions.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="MicrosoftExtensionsPrimitives" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Extensions.Primitives.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- System Dependencies -->
+      <Component Id="SystemComponentModelAnnotations" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.ComponentModel.Annotations.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemDiagnosticsDiagnosticSource" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Diagnostics.DiagnosticSource.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemRuntimeCompilerServicesUnsafe" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" />
+      </Component>
+
+      <!-- Additional Runtime Files (using wildcard for remaining DLLs) -->
+      <!-- Note: In production, you might want to list these explicitly -->
+      <Component Id="AdditionalRuntimeFiles" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\Microsoft.Win32.SystemEvents.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemDrawingCommon" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Drawing.Common.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemSecurityCryptographyXml" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Security.Cryptography.Xml.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemSecurityPermissions" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Security.Permissions.dll" KeyPath="yes" />
+      </Component>
+
+      <Component Id="SystemWindowsExtensions" Directory="BinFolder">
+        <File Source="$(var.PublishDir)\System.Windows.Extensions.dll" KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+  </Fragment>
+</Wix>

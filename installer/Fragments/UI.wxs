@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!-- UI Customizations -->
+
+    <!-- Custom properties for UI -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+
+    <!-- Checkbox for launching application after install -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Doc Helper" />
+
+    <!-- Custom text for installation -->
+    <Property Id="ApplicationFolderName" Value="DiaTech\DocHelper" />
+    <Property Id="WixAppFolder" Value="WixPerUserFolder" />
+
+    <!-- Add/Remove Programs properties -->
+    <Property Id="ARPCOMMENTS" Value="Doc Helper - Professional document processing application" />
+    <Property Id="ARPCONTACT" Value="support@diatech.com" />
+    <Property Id="ARPREADME" Value="https://github.com/DiaTech/DocHelper/blob/main/README.md" />
+
+    <!-- Custom dialogs text -->
+    <WixVariable Id="WixUILicenseRtf" Value="Assets\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="Assets\Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Assets\Dialog.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="Assets\DocHelper.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="Assets\DocHelper.ico" />
+    <WixVariable Id="WixUINewIco" Value="Assets\DocHelper.ico" />
+    <WixVariable Id="WixUIUpIco" Value="Assets\DocHelper.ico" />
+
+  </Fragment>
+</Wix>

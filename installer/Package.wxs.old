@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package Name="Doc Helper"
+           Language="1033"
+           Version="$(var.ProductVersion)"
+           Manufacturer="DiaTech"
+           UpgradeCode="A5B6C7D8-E9F0-4123-8456-789ABCDEF012"
+           InstallerVersion="500"
+           Compressed="yes"
+           Scope="perUser">
+
+    <!-- Package Details -->
+    <SummaryInformation Description="Doc Helper - Professional Document Processing Application"
+                        Manufacturer="DiaTech"
+                        Keywords="Document,Processing,Hyperlinks,Word,DOCX" />
+
+    <!-- Major Upgrade Configuration -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."
+                  AllowSameVersionUpgrades="yes"
+                  Schedule="afterInstallInitialize" />
+
+    <!-- Media Configuration -->
+    <Media Id="1" Cabinet="DocHelper.cab" EmbedCab="yes" CompressionLevel="high" />
+
+    <!-- Icon for Add/Remove Programs -->
+    <Icon Id="DocHelper.ico" SourceFile="Assets\DocHelper.ico" />
+    <Property Id="ARPPRODUCTICON" Value="DocHelper.ico" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/DiaTech/DocHelper" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/DiaTech/DocHelper" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+
+    <!-- Installation Directory Structure -->
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="CompanyFolder" Name="DiaTech">
+        <Directory Id="INSTALLFOLDER" Name="DocHelper">
+          <Directory Id="BinFolder" Name="bin" />
+          <Directory Id="LogsFolder" Name="logs" />
+          <Directory Id="ConfigFolder" Name="config" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Desktop and Start Menu -->
+    <StandardDirectory Id="DesktopFolder" />
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ProgramMenuCompanyFolder" Name="DiaTech">
+        <Directory Id="ProgramMenuAppFolder" Name="Doc Helper" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Features -->
+    <Feature Id="MainFeature"
+             Title="Doc Helper Application"
+             Description="Core application files and functionality"
+             Level="1"
+             AllowAbsent="no"
+             AllowAdvertise="no"
+             Display="expand"
+             ConfigurableDirectory="INSTALLFOLDER">
+
+      <ComponentGroupRef Id="CoreComponents" />
+      <ComponentGroupRef Id="DependencyComponents" />
+      <ComponentGroupRef Id="RegistryComponents" />
+
+      <Feature Id="ShortcutsFeature"
+               Title="Shortcuts"
+               Description="Desktop and Start Menu shortcuts"
+               Level="1">
+        <ComponentGroupRef Id="ShortcutComponents" />
+      </Feature>
+    </Feature>
+
+    <!-- Launch Conditions -->
+    <Launch Condition="VersionNT64 &gt;= 603"
+            Message="This application requires Windows 10 or later (64-bit)." />
+
+    <!-- Properties for UI -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch Doc Helper" />
+
+    <!-- Custom Actions for Launch After Install -->
+    <Property Id="WixShellExecTarget" Value="[#DocHelperExe]" />
+    <CustomAction Id="LaunchApplication"
+                  Execute="immediate"
+                  Impersonate="yes"
+                  Return="asyncNoWait"
+                  FileRef="DocHelperExe"
+                  ExeCommand="" />
+
+    <InstallExecuteSequence>
+      <Custom Action="LaunchApplication"
+              After="InstallFinalize"
+              Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed" />
+    </InstallExecuteSequence>
+
+    <!-- UI Configuration -->
+    <ui:WixUI Id="WixUI_InstallDir" />
+
+    <!-- License -->
+    <WixVariable Id="WixUILicenseRtf" Value="Assets\License.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="Assets\Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Assets\Dialog.bmp" />
+
+  </Package>
+</Wix>

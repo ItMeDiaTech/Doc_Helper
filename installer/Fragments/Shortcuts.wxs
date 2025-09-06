@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <!-- Shortcut Components -->
+    <ComponentGroup Id="ShortcutComponents">
+
+      <!-- Start Menu Shortcuts -->
+      <Component Id="StartMenuShortcut" Directory="ProgramMenuAppFolder" Guid="C9D0E1F2-A3B4-4789-0123-456789ABCDEF">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="Doc Helper"
+                  Description="Professional document processing tool"
+                  Target="[BinFolder]DocHelper.exe"
+                  WorkingDirectory="BinFolder"
+                  Icon="DocHelper.ico" />
+
+        <Shortcut Id="UninstallStartMenuShortcut"
+                  Name="Uninstall Doc Helper"
+                  Description="Uninstalls Doc Helper"
+                  Target="[System64Folder]msiexec.exe"
+                  Arguments="/x [ProductCode]"
+                  Icon="DocHelper.ico" />
+
+        <RemoveFolder Id="RemoveProgramMenuAppFolder" On="uninstall" />
+        <RemoveFolder Id="RemoveProgramMenuCompanyFolder" Directory="ProgramMenuCompanyFolder" On="uninstall" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\Shortcuts"
+                       Name="StartMenu"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+      <!-- Desktop Shortcut (Optional) -->
+      <Component Id="DesktopShortcutComponent" Directory="DesktopFolder" Guid="D0E1F2A3-B4C5-4789-0123-456789ABCDEF">
+        <Shortcut Id="DesktopShortcut"
+                  Name="Doc Helper"
+                  Description="Professional document processing tool"
+                  Target="[BinFolder]DocHelper.exe"
+                  WorkingDirectory="BinFolder"
+                  Icon="DocHelper.ico" />
+
+        <RegistryValue Root="HKCU"
+                       Key="Software\DiaTech\DocHelper\Shortcuts"
+                       Name="Desktop"
+                       Type="integer"
+                       Value="1"
+                       KeyPath="yes" />
+      </Component>
+
+    </ComponentGroup>
+
+    <!-- Properties for shortcut configuration -->
+    <Property Id="INSTALLDESKTOPSHORTCUT" Value="1" />
+
+  </Fragment>
+</Wix>
