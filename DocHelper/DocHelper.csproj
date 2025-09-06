@@ -12,7 +12,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
     
-    <!-- Single File Configuration -->
+    <!-- Single File Configuration with WPF compatibility -->
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
     <PublishTrimmed>false</PublishTrimmed>
@@ -21,6 +21,15 @@
     <DebugType>embedded</DebugType>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
+
+  <!-- Exclude WPF native libraries from single-file bundle -->
+  <ItemGroup>
+    <PublishWithSubPath Include="**/wpfgfx_cor3.dll" SubPath="" />
+    <PublishWithSubPath Include="**/PresentationNative_cor3.dll" SubPath="" />
+    <PublishWithSubPath Include="**/D3DCompiler_47_cor3.dll" SubPath="" />
+    <PublishWithSubPath Include="**/PenImc_cor3.dll" SubPath="" />
+    <PublishWithSubPath Include="**/vcruntime140_cor3.dll" SubPath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
