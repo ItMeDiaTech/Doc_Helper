@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["Version", "Changes", "Results"],
+  "properties": {
+    "Version": {
+      "type": "string",
+      "description": "API version number"
+    },
+    "Changes": {
+      "type": "string",
+      "description": "Update notes with escaped characters"
+    },
+    "Results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["Document_ID", "Content_ID", "Title", "Status"],
+        "properties": {
+          "Document_ID": {
+            "type": "string",
+            "description": "Unique document identifier for URL construction"
+          },
+          "Content_ID": {
+            "type": "string",
+            "description": "Content lookup ID (e.g., TSRC-PROD-018060, CMS-PCP1-026963)"
+          },
+          "Title": {
+            "type": "string",
+            "description": "Document title"
+          },
+          "Status": {
+            "type": "string",
+            "description": "Document status (e.g., 'Expired', 'Released')"
+          }
+        }
+      }
+    }
+  }
+}

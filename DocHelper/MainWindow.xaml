@@ -1,0 +1,176 @@
+﻿<Window x:Class="DocHelper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DocHelper"
+        mc:Ignorable="d"
+        Title="Doc Helper" Height="450" Width="800">
+    <Grid Background="Black">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Top section with two columns -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Left side - File display -->
+            <Border Grid.Column="0" Background="LightGray" Margin="10,10,5,5">
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding SelectedFiles}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding FileName}"
+                                        Command="{Binding DataContext.OpenFileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        Margin="5"
+                                        Padding="10,5"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        Background="White"
+                                        BorderBrush="Gray"
+                                        BorderThickness="1"
+                                        Cursor="Hand"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Border>
+            
+            <!-- Right side - Title and buttons -->
+            <Grid Grid.Column="1">
+                <TextBlock Text="Doc Helper" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top" 
+                           FontSize="24" 
+                           Foreground="White"
+                           Margin="20"/>
+                <StackPanel Orientation="Horizontal" 
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Top" 
+                            Margin="20">
+                    <Button Content="Settings" 
+                            Margin="0,0,10,0"
+                            Padding="10,5"
+                            Command="{Binding SettingsCommand}"/>
+                    <Button Content="Select File(s)" 
+                            Padding="10,5"
+                            Command="{Binding SelectFilesCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+        
+        <!-- Bottom section spanning full width - Hyperlinks -->
+        <Border Grid.Row="1" Background="LightGray" Margin="10,5,10,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Header -->
+                <Grid Grid.Row="0" Background="DarkGray">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="Text to Display" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="1" Text="URL" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="2" Text="Relationship ID" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="3" Text="Document_ID" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="4" Text="Content_ID" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="5" Text="Status" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                    <TextBlock Grid.Column="6" Text="JSON_Title" 
+                               FontWeight="Bold" 
+                               Margin="5,5" 
+                               Foreground="White"/>
+                </Grid>
+                
+                <!-- Hyperlinks List -->
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Hyperlinks}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" 
+                                               Text="{Binding DisplayText}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Black"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="{Binding Url}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Blue"
+                                               TextDecorations="Underline"/>
+                                    <TextBlock Grid.Column="2" 
+                                               Text="{Binding RelationshipId}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="DarkGreen"/>
+                                    <TextBlock Grid.Column="3" 
+                                               Text="{Binding DocumentId}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Purple"/>
+                                    <TextBlock Grid.Column="4" 
+                                               Text="{Binding ContentId}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Orange"/>
+                                    <TextBlock Grid.Column="5" 
+                                               Text="{Binding Status}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Red"/>
+                                    <TextBlock Grid.Column="6" 
+                                               Text="{Binding JsonTitle}" 
+                                               Margin="5,5" 
+                                               TextWrapping="Wrap"
+                                               Foreground="Brown"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

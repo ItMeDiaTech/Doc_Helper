@@ -1,0 +1,14 @@
+{
+  "schema": {
+    "type": "object",
+    "properties": {
+      "Lookup_ID": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": ["Lookup_ID"]
+  }
+}
