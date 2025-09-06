@@ -30,11 +30,13 @@ jobs:
 
       - name: Create Release Files
         run: |
-          # Create ZIP archive
+          # Create ZIP archive with all files
           Compress-Archive -Path ./publish/* -DestinationPath DocHelper-Release.zip
           
-          # Copy standalone exe for direct download
-          Copy-Item ./publish/DocHelper.exe DocHelper.exe
+          # Create a portable version - single folder with all dependencies
+          New-Item -ItemType Directory -Path "./portable" -Force
+          Copy-Item -Path "./publish/*" -Destination "./portable/" -Recurse -Force
+          Compress-Archive -Path ./portable/* -DestinationPath DocHelper-Portable.zip
         shell: powershell
 
       - name: Create Release
@@ -42,7 +44,7 @@ jobs:
         with:
           files: |
             DocHelper-Release.zip
-            DocHelper.exe
+            DocHelper-Portable.zip
           body: |
             ## Doc Helper Release ${{ github.ref_name }}
 
@@ -58,13 +60,23 @@ jobs:
             - Updated to .NET 9.0-windows for improved WPF compatibility
             - Added local NuGet.config for reliable package restoration
 
+            ### Download Options
+            - **DocHelper-Release.zip**: Complete installation package with all files
+            - **DocHelper-Portable.zip**: Portable version - extract and run anywhere
+            
             ### Installation
-            1. Download DocHelper-Release.zip
+            1. Download either zip file above
             2. Extract to desired location
             3. Run DocHelper.exe
+            
+            ### Features
+            - Automatic installation to %AppData% folder
+            - Taskbar pinning on first run
+            - Logs folder creation and management
+            - Self-contained - no additional .NET runtime needed
 
             ### Requirements
-            - Windows 10/11
-            - .NET 9 Runtime (included in self-contained release)
+            - Windows 10/11 x64
+            - No additional software required
           draft: false
           prerelease: false
