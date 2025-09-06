@@ -1,0 +1,580 @@
+<Window x:Class="Doc_Helper.UI.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    Title="{Binding Title}">
+
+    <Window.Resources>
+      <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ui:XamlControlsResources />
+            <ResourceDictionary Source="../Styles/MainWindowStyles.xaml"/>
+        </ResourceDictionary.MergedDictionaries>
+
+        <!-- Import converters -->
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:StatusToBrushConverter x:Key="StatusToBrushConverter" xmlns:local="clr-namespace:Doc_Helper.UI.Converters"/>
+        <local:LogLevelToBrushConverter x:Key="LogLevelToBrushConverter" xmlns:local="clr-namespace:Doc_Helper.UI.Converters"/>
+        <local:BooleanToProcessingColorConverter x:Key="BooleanToProcessingColorConverter" xmlns:local="clr-namespace:Doc_Helper.UI.Converters"/>
+        <local:PathToFileNameConverter x:Key="PathToFileNameConverter" xmlns:local="clr-namespace:Doc_Helper.UI.Converters"/>
+      </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Menu -->
+            <RowDefinition Height="Auto"/>  <!-- Toolbar -->
+            <RowDefinition Height="*"/>    <!-- Main Content -->
+            <RowDefinition Height="Auto"/>  <!-- Progress -->
+            <RowDefinition Height="Auto"/>  <!-- Status Bar -->
+        </Grid.RowDefinitions>
+
+        <!-- Menu Bar -->
+        <Menu Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Project"
+                          InputGestureText="Ctrl+N"
+                          Command="{Binding NewProjectCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="Add"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Open Folder"
+                          InputGestureText="Ctrl+O"
+                          Command="{Binding SelectFolderCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="Folder"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="_Settings"
+                          InputGestureText="Ctrl+,"
+                          Command="{Binding OpenSettingsCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="Setting"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+                <MenuItem Header="_Exit"
+                          InputGestureText="Alt+F4"
+                          Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Logs"
+                          Command="{Binding ViewLogsCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="View"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Export Changelog"
+                          Command="{Binding ExportChangelogCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="Save"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About"
+                          Command="{Binding ShowAboutCommand}">
+                    <MenuItem.Icon>
+                        <ui:SymbolIcon Symbol="Help"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+
+        <!-- Toolbar -->
+        <Border Grid.Row="1" BorderBrush="{DynamicResource SystemControlForegroundBaseMediumLowBrush}"
+                BorderThickness="0,1" Background="{DynamicResource SystemControlBackgroundChromeLowBrush}">
+            <ToolBar Background="Transparent" ToolBarTray.IsLocked="True">
+
+                <!-- File Selection Group -->
+                <Button Command="{Binding SelectFilesCommand}"
+                        ToolTip="Select individual documents to process">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Document" Margin="0,0,5,0"/>
+                        <TextBlock Text="Select Files"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding SelectFolderCommand}"
+                        ToolTip="Select a folder containing documents">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Folder" Margin="0,0,5,0"/>
+                        <TextBlock Text="Select Folder"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding ClearFilesCommand}"
+                        ToolTip="Clear selected files">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Delete" Margin="0,0,5,0"/>
+                        <TextBlock Text="Clear"/>
+                    </StackPanel>
+                </Button>
+
+                <Separator/>
+
+                <!-- Processing Actions Group -->
+                <Button Command="{Binding ProcessDocumentsCommand}"
+                        IsEnabled="{Binding CanProcess}"
+                        Style="{StaticResource PrimaryActionButtonStyle}"
+                        ToolTip="Start processing selected documents">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Play" Margin="0,0,5,0"/>
+                        <TextBlock Text="Process Documents"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Command="{Binding CancelCommand}"
+                        IsEnabled="{Binding CanCancelProcessing}"
+                        ToolTip="Cancel current processing">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Cancel" Margin="0,0,5,0"/>
+                        <TextBlock Text="Cancel"/>
+                    </StackPanel>
+                </Button>
+
+                <Separator/>
+
+                <!-- Backup/Undo Group -->
+                <Button Command="{Binding UndoCommand}"
+                        IsEnabled="{Binding CanUndo}"
+                        ToolTip="Undo changes and restore from backup">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Undo" Margin="0,0,5,0"/>
+                        <TextBlock Text="Undo"/>
+                    </StackPanel>
+                </Button>
+
+                <Separator/>
+
+                <!-- Quick Settings -->
+                <ToggleButton IsChecked="{Binding FixSourceHyperlinks}"
+                              ToolTip="Enable hyperlink processing">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="GoToStart" Margin="0,0,5,0"/>
+                        <TextBlock Text="Fix Links"/>
+                    </StackPanel>
+                </ToggleButton>
+
+                <ToggleButton IsChecked="{Binding OpenChangelogAfterUpdates}"
+                              ToolTip="Open changelog after processing">
+                    <StackPanel Orientation="Horizontal">
+                        <ui:SymbolIcon Symbol="Document" Margin="0,0,5,0"/>
+                        <TextBlock Text="Show Log"/>
+                    </StackPanel>
+                </ToggleButton>
+
+            </ToolBar>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Row="2" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="350" MinWidth="300"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="2*" MinWidth="400"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel - Project & Settings -->
+            <ui:SimpleStackPanel Grid.Column="0" Spacing="10">
+
+                <!-- File Selection Card -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
+
+                    <ui:SimpleStackPanel Spacing="12">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Folder" Width="20" Height="20" Margin="0,0,8,0"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                            <TextBlock Text="Selected Files" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding FilesCountText}"
+                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                   FontSize="13" FontWeight="Medium"/>
+
+                        <ListBox Height="180" ItemsSource="{Binding SelectedFiles}"
+                                 SelectedItem="{Binding SelectedFile}" AllowDrop="True"
+                                 BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                 Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Background="Transparent" Padding="8,6" CornerRadius="4"
+                                            Margin="2" BorderThickness="1" BorderBrush="Transparent">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundListLowBrush}"/>
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <StackPanel Orientation="Horizontal">
+                                            <ui:SymbolIcon Symbol="Document" Width="16" Height="16" Margin="0,0,10,0"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Converter={StaticResource PathToFileNameConverter}}"
+                                                           FontWeight="Medium" FontSize="13"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding}" FontSize="11" Opacity="0.7"
+                                                           Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                                                           TextTrimming="CharacterEllipsis" ToolTip="{Binding}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <ui:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                            <Button Padding="10,8" MinWidth="80" Command="{Binding SelectFilesCommand}"
+                                    Style="{StaticResource SecondaryActionButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Document" Width="14" Height="14" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Files" FontSize="12" FontWeight="Medium"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Padding="10,8" MinWidth="80" Command="{Binding SelectFolderCommand}"
+                                    Style="{StaticResource SecondaryActionButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Folder" Width="14" Height="14" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Folder" FontSize="12" FontWeight="Medium"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Padding="10,8" MinWidth="80" Command="{Binding ClearFilesCommand}"
+                                    Style="{StaticResource SecondaryActionButtonStyle}">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Delete" Width="14" Height="14" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Clear" FontSize="12" FontWeight="Medium"/>
+                                </StackPanel>
+                            </Button>
+                        </ui:SimpleStackPanel>
+
+                    </ui:SimpleStackPanel>
+                </Border>
+
+                <!-- Processing Options Card -->
+                <Border Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="15">
+
+                    <ui:SimpleStackPanel Spacing="15">
+                        <StackPanel Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Setting" Width="20" Height="20" Margin="0,0,8,0"
+                                           Foreground="{DynamicResource SystemControlForegroundBaseHighBrush}"/>
+                            <TextBlock Text="Processing Options" FontSize="18" FontWeight="SemiBold"/>
+                        </StackPanel>
+
+                        <!-- Core Options -->
+                        <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                CornerRadius="8" Padding="16" BorderThickness="1"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <ui:SimpleStackPanel Spacing="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Document" Width="16" Height="16" Margin="0,0,8,0"
+                                                   Foreground="{DynamicResource SystemControlAccentBrush}"/>
+                                    <TextBlock Text="Document Processing" FontWeight="SemiBold" FontSize="14"
+                                               Foreground="{DynamicResource SystemControlAccentBrush}"/>
+                                </StackPanel>
+
+                                <CheckBox Content="Fix Source Hyperlinks" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding FixSourceHyperlinks}" FontSize="13"/>
+                                <CheckBox Content="↳ Append Content ID" Margin="35,0,0,0" Padding="8,4"
+                                          IsChecked="{Binding AppendContentID}" FontSize="12" Opacity="0.9"
+                                          IsEnabled="{Binding FixSourceHyperlinks}"/>
+                                <CheckBox Content="↳ Check Title Changes" Margin="35,0,0,0" Padding="8,4"
+                                          IsChecked="{Binding CheckTitleChanges}" FontSize="12" Opacity="0.9"
+                                          IsEnabled="{Binding FixSourceHyperlinks}"/>
+                                <CheckBox Content="↳ Fix Titles" Margin="35,0,0,0" Padding="8,4"
+                                          IsChecked="{Binding FixTitles}" FontSize="12" Opacity="0.9"
+                                          IsEnabled="{Binding FixSourceHyperlinks}"/>
+
+                                <Separator Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                           Height="1" Margin="10,8"/>
+
+                                <CheckBox Content="Fix Internal Hyperlinks" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding FixInternalHyperlink}" FontSize="13"/>
+                                <CheckBox Content="Fix Double Spaces" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding FixDoubleSpaces}" FontSize="13"/>
+                            </ui:SimpleStackPanel>
+                        </Border>
+
+                        <!-- Advanced Options -->
+                        <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                CornerRadius="8" Padding="16" BorderThickness="1"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <ui:SimpleStackPanel Spacing="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Repair" Width="16" Height="16" Margin="0,0,8,0"
+                                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                                    <TextBlock Text="Advanced Processing" FontWeight="SemiBold" FontSize="14"/>
+                                </StackPanel>
+
+                                <CheckBox Content="Replace Hyperlinks" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding ReplaceHyperlink}" FontSize="13"/>
+                                <CheckBox Content="Replace Text" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding ReplaceText}" FontSize="13"/>
+                            </ui:SimpleStackPanel>
+                        </Border>
+
+                        <!-- Output Options -->
+                        <Border Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                CornerRadius="8" Padding="16" BorderThickness="1"
+                                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                            <ui:SimpleStackPanel Spacing="12">
+                                <StackPanel Orientation="Horizontal">
+                                    <ui:SymbolIcon Symbol="Save" Width="16" Height="16" Margin="0,0,8,0"
+                                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                                    <TextBlock Text="Output Options" FontWeight="SemiBold" FontSize="14"/>
+                                </StackPanel>
+
+                                <CheckBox Content="Open Changelog After Updates" Margin="20,0,0,0" Padding="8,6"
+                                          IsChecked="{Binding OpenChangelogAfterUpdates}" FontSize="13"/>
+                            </ui:SimpleStackPanel>
+                        </Border>
+
+                        <!-- Quick Actions -->
+                        <Button Command="{Binding OpenSettingsCommand}"
+                                HorizontalAlignment="Stretch" Padding="12,10" Margin="0,5,0,0"
+                                Style="{StaticResource PrimaryActionButtonStyle}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <ui:SymbolIcon Symbol="Setting" Width="16" Height="16" Margin="0,0,10,0"/>
+                                <TextBlock Text="Advanced Settings" FontSize="13" FontWeight="Medium"/>
+                            </StackPanel>
+                        </Button>
+
+                    </ui:SimpleStackPanel>
+                </Border>
+
+            </ui:SimpleStackPanel>
+
+            <!-- Splitter -->
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Stretch"
+                          Background="Transparent"/>
+
+            <!-- Right Panel - Results & Output -->
+            <Border Grid.Column="2"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
+                    BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header with actions -->
+                    <Grid Grid.Row="0" Margin="0,0,0,15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <ui:SymbolIcon Symbol="Document" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Processing Results" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <Button Command="{Binding ExportChangelogCommand}"
+                                    ToolTip="Export changelog to file" Padding="6" Margin="0,0,5,0">
+                                <ui:SymbolIcon Symbol="Save"/>
+                            </Button>
+                            <Button Command="{Binding ClearFilesCommand}"
+                                    ToolTip="Clear all results" Padding="6" Margin="0,0,5,0">
+                                <ui:SymbolIcon Symbol="Delete"/>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Tabbed Content -->
+                    <TabControl Grid.Row="1">
+
+                        <!-- Results Tab -->
+                        <TabItem Header="📈 Results">
+                            <DataGrid AutoGenerateColumns="False" IsReadOnly="True"
+                                      ItemsSource="{Binding ProcessingResults}"
+                                      SelectedItem="{Binding SelectedResult}"
+                                      BorderThickness="0" GridLinesVisibility="Horizontal"
+                                      HeadersVisibility="Column" CanUserResizeColumns="True">
+                                <DataGrid.Resources>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Padding" Value="8,4"/>
+                                    </Style>
+                                </DataGrid.Resources>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="📄 File" Binding="{Binding FileName}" Width="*" MinWidth="150"/>
+                                    <DataGridTemplateColumn Header="Status" Width="120">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="12" Padding="8,4" HorizontalAlignment="Left" Margin="5,2"
+                                                        Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}"
+                                                        BorderBrush="{Binding Status, Converter={StaticResource StatusToBrushConverter}}"
+                                                        BorderThickness="1" MinWidth="70">
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Ellipse Width="6" Height="6" Margin="0,0,5,0" VerticalAlignment="Center"
+                                                                 Fill="White" Opacity="0.9"/>
+                                                        <TextBlock Text="{Binding Status}" Foreground="White" FontSize="11"
+                                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="🔗 Links" Binding="{Binding HyperlinkCount}" Width="80"/>
+                                    <DataGridTextColumn Header="✅ Updated" Binding="{Binding UpdatedCount}" Width="80"/>
+                                    <DataGridTextColumn Header="⚠️ Errors" Binding="{Binding ErrorCount}" Width="80"/>
+                                    <DataGridTextColumn Header="⏱️ Time" Binding="{Binding ProcessingTime}" Width="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+
+                        <!-- Changelog Tab -->
+                        <TabItem Header="📝 Changelog">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                        CornerRadius="4" Padding="8" Margin="0,0,0,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Important" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Detailed processing changelog for review"
+                                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <TextBox Grid.Row="1" IsReadOnly="True" Text="{Binding ChangelogText}"
+                                         VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                         TextWrapping="NoWrap" FontFamily="Consolas" FontSize="12"
+                                         Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                         BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"/>
+                            </Grid>
+                        </TabItem>
+
+                        <!-- Live Logs Tab -->
+                        <TabItem Header="📜 Live Logs">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0" Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                        CornerRadius="4" Padding="8" Margin="0,0,0,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <ui:SymbolIcon Symbol="Clock" Margin="0,0,8,0"/>
+                                        <TextBlock Text="Real-time processing information"
+                                                   Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <ListBox Grid.Row="1" ItemsSource="{Binding ProcessingLog}"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                         Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                                         BorderThickness="1" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="8,4" BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                                    BorderThickness="0,0,0,1">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="70"/>
+                                                        <ColumnDefinition Width="60"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Grid.Column="0" Text="{Binding Timestamp, StringFormat='HH:mm:ss'}"
+                                                               FontFamily="Consolas" FontSize="11" VerticalAlignment="Top"/>
+                                                    <Border Grid.Column="1" CornerRadius="8" Padding="4,1" HorizontalAlignment="Left"
+                                                            Background="{Binding Level, Converter={StaticResource LogLevelToBrushConverter}}">
+                                                        <TextBlock Text="{Binding Level}" FontSize="10" Foreground="White" FontWeight="Medium"/>
+                                                    </Border>
+                                                    <TextBlock Grid.Column="2" Text="{Binding Message}" TextWrapping="Wrap"
+                                                               FontSize="12" Margin="8,0,0,0"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </TabItem>
+
+                    </TabControl>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Progress Section -->
+        <Border Grid.Row="3" Background="{DynamicResource SystemControlBackgroundChromeLowBrush}"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                BorderThickness="0,1" Padding="15,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+
+                <ui:SimpleStackPanel Grid.Column="0" Spacing="6">
+                    <TextBlock Text="{Binding ProgressStatus}" FontWeight="Medium"/>
+                    <ui:ProgressBar Height="6" Value="{Binding ProgressPercentage, Mode=OneWay}"
+                                    IsIndeterminate="{Binding IsProgressIndeterminate}"
+                                    ShowError="False" ShowPaused="False"/>
+                </ui:SimpleStackPanel>
+
+                <ui:SimpleStackPanel Grid.Column="1" Spacing="4" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding ProgressText}" FontSize="12"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                               HorizontalAlignment="Right"/>
+                </ui:SimpleStackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Status Bar -->
+        <StatusBar Grid.Row="4" Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+                   BorderBrush="{DynamicResource SystemControlForegroundBaseLowBrush}" BorderThickness="0,1,0,0">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Accept" Width="12" Height="12" Margin="0,0,6,0"
+                                   Foreground="{Binding IsProcessing, Converter={StaticResource BooleanToProcessingColorConverter}}"/>
+                    <TextBlock Text="{Binding StatusMessage}"/>
+                </StackPanel>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <ui:SymbolIcon Symbol="Document" Width="12" Height="12" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding FilesCountText}"/>
+                </StackPanel>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal" Visibility="{Binding CanUndo, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ui:SymbolIcon Symbol="Undo" Width="12" Height="12" Margin="0,0,4,0" Foreground="Orange"/>
+                    <TextBlock Text="Backup Available" Foreground="Orange"/>
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Bulk Editor Modern" FontWeight="Medium"/>
+                    <TextBlock Text=" v3.0" Margin="2,0,0,0"
+                               Foreground="{DynamicResource SystemControlForegroundBaseMediumBrush}"/>
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
+    </Grid>
+</Window>

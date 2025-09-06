@@ -1,0 +1,44 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>13.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>NU1903;NU1701</WarningsNotAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <Version>3.0.0</Version>
+    <Company>DiaTech</Company>
+    <Product>Bulk Editor Modern</Product>
+    <Copyright>© 2025 DiaTech. All rights reserved.</Copyright>
+    <Authors>DiaTech</Authors>
+    <Description>Modern WPF application for bulk document processing and hyperlink management</Description>
+    
+    <!-- Global Warning Suppressions -->
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8622;CS8604;CS8603;CS8633;CS8602;CS8601;CS1998;CA1416;EF1002;CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+    <DefineConstants>TRACE</DefineConstants>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <!-- Common package references for all projects -->
+  <!-- Note: Individual projects include their specific dependencies -->
+
+  <!-- Code analysis and quality -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>

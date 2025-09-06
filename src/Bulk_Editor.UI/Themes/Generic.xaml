@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Generic theme dictionary for Bulk Editor -->
+    <!-- This file is referenced by the project configuration for XAML theme compilation -->
+
+    <!-- Merged dictionaries from other theme files -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Doc_Helper.UI;component/Themes/DefaultTheme.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Additional generic styles can be added here -->
+
+</ResourceDictionary>

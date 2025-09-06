@@ -1,0 +1,83 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Core", "src\Bulk_Editor.Core\Doc_Helper.Core.csproj", "{A1B2C3D4-E5F6-7890-ABCD-1234567890AB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Data", "src\Bulk_Editor.Data\Doc_Helper.Data.csproj", "{6470E2BB-38F1-486F-8152-69AD48EC7562}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Infrastructure", "src\Bulk_Editor.Infrastructure\Doc_Helper.Infrastructure.csproj", "{67B36D1A-392C-4E28-BA3F-836B2844CB6C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.UI", "src\Bulk_Editor.UI\Doc_Helper.UI.csproj", "{400888D4-F2B4-47C4-87FC-7CA458383349}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Shared", "src\Bulk_Editor.Shared\Doc_Helper.Shared.csproj", "{B7D45F97-A75A-46F7-B63B-D0FEFAA7D546}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Console", "src\Bulk_Editor.Console\Doc_Helper.Console.csproj", "{C5D45F97-A75A-46F7-B63B-D0FEFAA7D547}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7C74896E-877A-4C8C-A87F-D7CE9F5ABC84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BF805717-833D-4A20-A09E-863F1B243F21}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Core.Tests", "tests\Bulk_Editor.Core.Tests\Doc_Helper.Core.Tests.csproj", "{11111111-2222-3333-4444-555555555555}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Data.Tests", "tests\Bulk_Editor.Data.Tests\Doc_Helper.Data.Tests.csproj", "{22222222-3333-4444-5555-666666666666}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.Infrastructure.Tests", "tests\Bulk_Editor.Infrastructure.Tests\Doc_Helper.Infrastructure.Tests.csproj", "{33333333-4444-5555-6666-777777777777}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doc_Helper.UI.Tests", "tests\Bulk_Editor.UI.Tests\Doc_Helper.UI.Tests.csproj", "{44444444-5555-6666-7777-888888888888}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1B2C3D4-E5F6-7890-ABCD-1234567890AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-1234567890AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-1234567890AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-1234567890AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6470E2BB-38F1-486F-8152-69AD48EC7562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6470E2BB-38F1-486F-8152-69AD48EC7562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6470E2BB-38F1-486F-8152-69AD48EC7562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6470E2BB-38F1-486F-8152-69AD48EC7562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67B36D1A-392C-4E28-BA3F-836B2844CB6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67B36D1A-392C-4E28-BA3F-836B2844CB6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67B36D1A-392C-4E28-BA3F-836B2844CB6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67B36D1A-392C-4E28-BA3F-836B2844CB6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{400888D4-F2B4-47C4-87FC-7CA458383349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{400888D4-F2B4-47C4-87FC-7CA458383349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{400888D4-F2B4-47C4-87FC-7CA458383349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{400888D4-F2B4-47C4-87FC-7CA458383349}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D45F97-A75A-46F7-B63B-D0FEFAA7D546}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D45F97-A75A-46F7-B63B-D0FEFAA7D546}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D45F97-A75A-46F7-B63B-D0FEFAA7D546}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D45F97-A75A-46F7-B63B-D0FEFAA7D546}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5D45F97-A75A-46F7-B63B-D0FEFAA7D547}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5D45F97-A75A-46F7-B63B-D0FEFAA7D547}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5D45F97-A75A-46F7-B63B-D0FEFAA7D547}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5D45F97-A75A-46F7-B63B-D0FEFAA7D547}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11111111-2222-3333-4444-555555555555}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11111111-2222-3333-4444-555555555555}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11111111-2222-3333-4444-555555555555}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11111111-2222-3333-4444-555555555555}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22222222-3333-4444-5555-666666666666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22222222-3333-4444-5555-666666666666}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22222222-3333-4444-5555-666666666666}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22222222-3333-4444-5555-666666666666}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33333333-4444-5555-6666-777777777777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33333333-4444-5555-6666-777777777777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33333333-4444-5555-6666-777777777777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33333333-4444-5555-6666-777777777777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44444444-5555-6666-7777-888888888888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44444444-5555-6666-7777-888888888888}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44444444-5555-6666-7777-888888888888}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44444444-5555-6666-7777-888888888888}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {12345678-9ABC-DEF0-1234-56789ABCDEF0}
+		dotnet_code_quality.enable_platform_analyzer_on_pre_net5_target = false
+	EndGlobalSection
+EndGlobal

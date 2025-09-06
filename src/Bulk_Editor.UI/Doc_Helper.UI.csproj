@@ -1,0 +1,124 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <!-- <ApplicationIcon>Assets/app.ico</ApplicationIcon> -->
+    <AssemblyName>DocHelper</AssemblyName>
+    <RootNamespace>Doc_Helper.UI</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <!-- Debug Configuration -->
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <!-- Runtime Configuration -->
+    <RollForward>LatestMinor</RollForward>
+    <UseAppHost>true</UseAppHost>
+
+    <!-- Velopack Configuration -->
+    <EnableVelopack>true</EnableVelopack>
+    <VelopackTargetFramework>net9.0-windows</VelopackTargetFramework>
+    <VelopackId>DocHelper</VelopackId>
+    <VelopackInstallLocation>%LocalAppData%\DocHelper</VelopackInstallLocation>
+
+    <!-- Disable implicit WPF items so we can list them explicitly -->
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <!-- (optional) if you ever explicitly list <Resource /> items:
+    <EnableDefaultResourceItems>false</EnableDefaultResourceItems>
+    -->
+
+    <!-- Warning Suppressions -->
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8622;CS8604;CS8603;CS8633;CS1998;CA1416;EF1002</NoWarn>
+    <WarningsAsErrors />
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bulk_Editor.Core\Doc_Helper.Core.csproj" />
+    <ProjectReference Include="..\Bulk_Editor.Data\Doc_Helper.Data.csproj" />
+    <ProjectReference Include="..\Bulk_Editor.Infrastructure\Doc_Helper.Infrastructure.csproj" />
+    <ProjectReference Include="..\Bulk_Editor.Shared\Doc_Helper.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Prism MVVM Framework with DryIoc -->
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.1" />
+    <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
+
+    <!-- ModernWpfUI for modern UI styling -->
+    <PackageReference Include="ModernWpfUI" Version="0.9.6" />
+
+    <!-- Microsoft Extensions -->
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
+
+    <!-- Entity Framework Core -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.8" />
+
+    <!-- Serilog for logging -->
+    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+
+    <!-- Polly for resilience -->
+    <PackageReference Include="Polly" Version="8.6.3" />
+
+    <!-- WPF Extended Toolkit -->
+
+    <!-- For async command support -->
+    <PackageReference Include="System.Reactive" Version="6.0.2" />
+
+    <!-- Comprehensive validation -->
+    <PackageReference Include="FluentValidation" Version="12.0.0" />
+
+    <!-- MVVM source generators -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+
+    <PackageReference Include="Velopack" Version="0.0.1298" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Application settings -->
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Icon and resources -->
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
+  <!-- Explicit WPF XAML items -->
+  <ItemGroup>
+    <!-- App.xaml must be ApplicationDefinition so App.g.i.cs is generated -->
+    <ApplicationDefinition Include="App.xaml" />
+
+    <!-- All views (MainWindow + dialogs) -->
+    <Page Include="Views\**\*.xaml" />
+
+    <!-- All theme dictionaries -->
+    <Page Include="Themes\**\*.xaml" />
+    
+    <!-- All style dictionaries -->
+    <Page Include="Styles\**\*.xaml" />
+  </ItemGroup>
+
+</Project>

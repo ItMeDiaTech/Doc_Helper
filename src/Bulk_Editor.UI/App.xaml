@@ -1,0 +1,27 @@
+<prism:PrismApplication x:Class="Doc_Helper.UI.App"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:prism="http://prismlibrary.com/"
+                        xmlns:ui="http://schemas.modernwpf.com/2019"
+                        xmlns:converters="clr-namespace:Doc_Helper.UI.Converters">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <!-- ModernWPF Theme Dictionaries - Must be first -->
+        <ui:XamlControlsResources />
+        
+        <!-- Application specific themes -->
+        <ResourceDictionary Source="Themes/DefaultTheme.xaml"/>
+      </ResourceDictionary.MergedDictionaries>
+
+      <converters:BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+      <converters:InverseBooleanConverter x:Key="InverseBoolConverter" />
+      <converters:StatusToColorConverter x:Key="StatusToColorConverter" />
+
+      <Style TargetType="Button">
+        <Setter Property="Padding" Value="10,5"/>
+        <Setter Property="Margin"  Value="5"/>
+      </Style>
+    </ResourceDictionary>
+  </Application.Resources>
+</prism:PrismApplication>
